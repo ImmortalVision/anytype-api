@@ -1,0 +1,105 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: anytype-api
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: anytype-api-config
+  namespace: anytype-api
+data:
+  network.yml: |
+    paste your network.yml content here
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: anytype-api-data
+  namespace: anytype-api
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anytype-api
+  namespace: anytype-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anytype-api
+  template:
+    metadata:
+      labels:
+        app: anytype-api
+    spec:
+      containers:
+      - name: anytype-api
+        image: immortalvision/anytype-api:latest
+        imagePullPolicy: Always
+        command: ["anytype", "serve", "--listen-address", "0.0.0.0:80"]
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+          - name: config-volume
+            mountPath: /config/network.yml
+            subPath: network.yml
+          - name: data-volume
+            mountPath: /root/.anytype
+      volumes:
+      - name: config-volume
+        configMap:
+          name: anytype-api-config
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: anytype-api-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: anytype-api
+  namespace: anytype-api
+spec:
+  selector:
+    app: anytype-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+    name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: anytype-api
+  namespace: anytype-api
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 200m
+spec:
+  ingressClassName: public
+  rules:
+  - host: anytype-api.your-domian.tld
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: anytype-api
+              port:
+                name: http
+  tls:
+  - hosts:
+    - anytype-api.your-domian.tld
+    secretName: anytype-api-tls
+      
+
