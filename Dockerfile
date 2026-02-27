@@ -15,8 +15,6 @@ RUN anytype --version
 RUN mkdir /config
 RUN mkdir /root/.config
 RUN ln -s /config ~/.config/anytype
-RUN echo "anytype serve" > entrypoint.sh
-RUN chmod +x entrypoint.sh
 # gRPC
 EXPOSE 31010
 # gRPC-Web
@@ -24,4 +22,4 @@ EXPOSE 31011
 # HTTP API
 EXPOSE 31012
 
-CMD ["ash", "/bot/entrypoint.sh"]
+CMD ["anytype", "serve"]
