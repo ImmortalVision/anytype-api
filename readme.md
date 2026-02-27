@@ -1,3 +1,4 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker Pulls](https://img.shields.io/docker/pulls/immortalvision/anytype-api)](https://hub.docker.com/r/immortalvision/anytype-api)
 [![Docker Image Size (tag)](https://img.shields.io/docker/image-size/immortalvision/anytype-api/latest)](https://hub.docker.com/r/immortalvision/anytype-api)
 
