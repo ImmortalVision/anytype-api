@@ -10,7 +10,7 @@ to interact with your channels, you need to expose the API so you can
 access it from your bot.
 
 Hence I've created this repo (and a docker image on
-[https://hub.docker.com/r/immortalvision/anytype-api](docker hub)).
+[docker hub](https://hub.docker.com/r/immortalvision/anytype-api)).
 
 ## Usage
 
