@@ -20,6 +20,7 @@ image from dockerhub and use it like this:
 docker run -d \
     -p 31012:31012 \
     --name anytype-api \
+    -v ./data:/root/.anytype \
     immortalvision/anytype-api:latest
 ```
 
@@ -42,6 +43,7 @@ container and run it like this:
 docker run -d \
     -p 31012:31012 \
     -v /path/to/your/anytype/network.yml:/config/network.yml \
+    -v ./data:/root/.anytype \
     --name anytype-api \
     immortalvision/anytype-api:latest
 ```
@@ -54,5 +56,54 @@ you can change the `--listen-address` flag in the `Dockerfile` like this:
 docker run -d \
     -p 8888:80 \
     --name anytype-api \
+    -v ./data:/root/.anytype \
     immortalvision/anytype-api:latest --listen-address 0.0.0.0:80
 ```
+
+## Next Steps
+
+Now that you have the API up and running, you should initiate your bot
+so it can start serving requests.
+
+```ad-warning
+If you don't initiate your bot, the API will not serve any requests.
+```
+
+### Initiate Bot
+
+To create a new bot run this:
+
+```bash
+anytype auth create my-bot --network-config ~/.config/anytype/network.yml
+```
+
+```ad-note
+If you're not running a self-hosted sync server,
+you can skip the `--network-config` flag.
+```
+
+```ad-warning
+In my experience, after creating the bot, you should restart the container
+to make sure the bot is initiated properly.
+```
+
+Then you should join a channel:
+
+```bash
+anytype space join "<invite-link>"
+```
+
+To confirm that your bot has joined the channel, you can run this:
+
+```bash
+anytype space list
+```
+
+Now you can create an API key for the bot to access sync server:
+
+```bash
+anytype auth apikey create "<my-bot-api-key>"
+```
+
+This will create an api key that you can use to interact with sync-server,
+the specs are [here](anytype auth apikey create "my-bot-api-key").
