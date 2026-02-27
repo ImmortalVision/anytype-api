@@ -5,11 +5,12 @@
 # anytype-api
 
 Since anytype uses local-first approach for security and privacy,
-their API only works on localhost, But if you wan to create a bot
+their API only works on localhost, But if you want to create a bot
 to interact with your channels, you need to expose the API so you can
 access it from your bot.
 
-Hence I've created this repo (and a docker image on dockerhub).
+Hence I've created this repo (and a docker image on
+[https://hub.docker.com/r/immortalvision/anytype-api](docker hub)).
 
 ## Usage
 
