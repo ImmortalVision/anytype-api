@@ -16,6 +16,11 @@ Hence I've created this repo (and a docker image on dockerhub).
 If you want to use the official sync server, you can just get the pre-built
 image from dockerhub and use it like this:
 
+```ad-note
+If you want to deploy this repo on k8s, check our sample k8s deployment file
+(here)[deployments/k8s/deployment.yaml].
+```
+
 ```bash
 docker run -d \
     -p 31012:31012 \
