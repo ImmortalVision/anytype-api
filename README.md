@@ -9,13 +9,22 @@ their API only works on localhost, But if you want to create a bot
 to interact with your channels, you need to expose the API so you can
 access it from your bot.
 
-Hence I've created this repo (and a docker image on
-[docker hub](https://hub.docker.com/r/immortalvision/anytype-api)).
+Hence I've created this repo and published the image on
+[Docker Hub](https://hub.docker.com/r/immortalvision/anytype-api) and
+[GitHub Container Registry](https://github.com/orgs/ImmortalVision/packages/container/package/anytype-api).
 
 ## Usage
 
-If you want to use the official sync server, you can just get the pre-built
-image from dockerhub and use it like this:
+If you want to use the official sync server, you can use the pre-built
+image from Docker Hub or GHCR:
+
+```bash
+docker pull immortalvision/anytype-api:latest
+# Or pull the same image from GHCR:
+docker pull ghcr.io/immortalvision/anytype-api:latest
+```
+
+Run the image from Docker Hub:
 
 > [!NOTE]
 > If you want to deploy this repo on k8s, check our sample k8s deployment file
@@ -28,6 +37,10 @@ docker run -d \
     -v ./data:/root/.anytype \
     immortalvision/anytype-api:latest
 ```
+
+To run the GHCR image instead, replace the image name in the command with
+`ghcr.io/immortalvision/anytype-api:latest`. Both registries also provide
+commit-specific tags.
 
 But if you're running self-hosted sync server, or you want to build the image yourself,
 you can clone this repo and build the image like this:

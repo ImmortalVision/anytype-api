@@ -7,6 +7,7 @@ RUN chmod +x install.sh
 RUN bash /root/install.sh
 
 FROM alpine:latest
+LABEL org.opencontainers.image.source="https://github.com/ImmortalVision/anytype-api"
 RUN mkdir /bot
 WORKDIR /bot
 COPY --from=build /root/.local/bin/anytype /usr/bin
