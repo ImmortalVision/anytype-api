@@ -24,6 +24,22 @@ spec:
     requests:
       storage: 10Mi
 ---
+# Anytype's own data (space stores, object store, device key, API keys) lives in
+# ~/.config/anytype/data, which the image links to /config/data. Without a volume
+# there, every pod restart starts empty: it re-syncs from the network and loses
+# the device identity and all API keys.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: anytype-api-storage
+  namespace: anytype-api
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,6 +47,9 @@ metadata:
   namespace: anytype-api
 spec:
   replicas: 1
+  # one pod at a time: two anytype processes must never share the data volume
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: anytype-api
@@ -44,6 +63,12 @@ spec:
         image: immortalvision/anytype-api:latest
         imagePullPolicy: Always
         command: ["anytype", "serve", "--listen-address", "0.0.0.0:80"]
+        env:
+        # the API only answers localhost/IP hosts unless the public host is allowed
+        - name: ANYTYPE_API_ALLOWED_HOSTS
+          value: "anytype-api.your-domian.tld"
+        - name: ANYTYPE_API_ALLOWED_ORIGINS
+          value: "https://anytype-api.your-domian.tld"
         ports:
         - containerPort: 80
           name: http
@@ -53,6 +78,8 @@ spec:
             subPath: network.yml
           - name: data-volume
             mountPath: /root/.anytype
+          - name: storage-volume
+            mountPath: /config/data
       volumes:
       - name: config-volume
         configMap:
@@ -60,6 +87,9 @@ spec:
       - name: data-volume
         persistentVolumeClaim:
           claimName: anytype-api-data
+      - name: storage-volume
+        persistentVolumeClaim:
+          claimName: anytype-api-storage
 ---
 apiVersion: v1
 kind: Service
